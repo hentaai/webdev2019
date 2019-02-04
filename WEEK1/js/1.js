@@ -6,3 +6,4 @@ if (sale){
 
 console.log(234567)
 
+
