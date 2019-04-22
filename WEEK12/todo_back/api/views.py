@@ -3,7 +3,7 @@ from api.models import TaskList
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
-from api.serializers import TaskListSerializer, TaskListSerializer2, TaskSerializer
+from api.serializers import TaskListSerializer, TaskListSerializer2, TaskSerializer, TaskSerializer2
 # Create your views here.
 
 @csrf_exempt
@@ -34,12 +34,12 @@ def task_list_detail(request, pk):
 		return JsonResponse({'error': str(e)})
 
 	if request.method == 'GET':
-		serializer = TaskListSerializer(tasklist)
+		serializer = TaskListSerializer2(tasklist)
 		return JsonResponse(serializer.data)
 
 	elif request.method == 'PUT':
 		body = json.loads(request.body)
-		serializer = TaskListSerializer(instance=tasklist, data=body)
+		serializer = TaskListSerializer2(instance=tasklist, data=body)
 		
 		if serializer.is_valid():
 			serializer.save()
@@ -51,14 +51,26 @@ def task_list_detail(request, pk):
 		tasklist.delete()
 		return JsonResponse({'delete': True})
 
-	return JsonResponse(task_list.to_json())
+	return JsonResponse(tasklist.to_json())
 
+@csrf_exempt
 def tasks(request, pk):
 	try: 
 		task_list = TaskList.objects.get(id = pk)
 	except TaskList.DoesNotExist as e:
 		return JsonResponse({'error': str(e)})
 
-	tasks = task_list.task_set.all()
-	serializer = TaskSerializer(tasks, many=True)
-	return JsonResponse(serializer.data, safe = False)
+
+	if request.method == 'GET':
+		tasks = task_list.task_set.all()
+		serializer = TaskSerializer2(tasks, many=True)
+		return JsonResponse(serializer.data, safe = False)
+
+	elif request.method == 'POST':
+		body = json.loads(request.body)
+		serializer = TaskSerializer2(data=body)
+		if serializer.is_valid():
+			serializer.save()
+			return JsonResponse(serializer.data)
+		return JsonResponse(serializer.errors)
+

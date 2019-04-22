@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import TaskList
+from api.models import TaskList, Task
 
 class TaskListSerializer(serializers.Serializer):
 	id = serializers.IntegerField(read_only=True)
@@ -29,3 +29,9 @@ class TaskSerializer(serializers.Serializer):
 	due_on = serializers.DateTimeField()
 	status = serializers.CharField()
 	task_list = TaskListSerializer2()
+
+
+class TaskSerializer2(serializers.ModelSerializer):
+	class Meta:
+		model = Task
+		fields = '__all__'
