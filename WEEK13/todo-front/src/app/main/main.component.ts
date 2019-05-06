@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProviderService } from '../shared/services/provider.service'
+  import { ProviderService } from '../shared/services/provider.service'
 import { ITaskList, ITask } from '../shared/models/models' 
 
 @Component({
@@ -98,7 +98,7 @@ export class MainComponent implements OnInit {
 
   logout(){
     this.provider.logout().then(res=>{
-      localStorage.clear()
+      localStorage.removeItem('token')
       this.logged = false
     })
   }

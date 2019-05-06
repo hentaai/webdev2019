@@ -1,0 +1,75 @@
+
+<ng-container *ngIf="!logged">
+  <div>
+    <div><input type="text" [(ngModel)]="login"></div>
+    <div><input type="text" [(ngModel)]="password"></div>
+    <div><button (click)="auth()">Log in</button></div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="logged">
+  CREATE TASKLIST:
+  <div>
+    <input type="text" [(ngModel)]="name">
+    <button (click)="createTaskList()">CREATE</button>
+  </div>
+
+  CREATE TASK:
+  <div>
+    <span><input type="text" [(ngModel)]="taskName"></span>
+    <span><input type="text" [(ngModel)]="created_at"></span>
+    <span><input type="text" [(ngModel)]="due_on"></span>
+    <span><input type="text" [(ngModel)]="status"></span>
+    <span><input type="text" [(ngModel)]="task_list"></span>
+    <button (click) = "createTask()">CREATE</button>
+  </div>
+
+  TASK_LISTS:
+  <div *ngIf="!loading">
+    Loading...
+  </div>
+
+  <ng-container *ngIf="loading">
+    <div>
+      <div *ngFor="let list of task_lists" (click)="getTasks(list, suffix)">
+        <span (click)="getTasks(list, suffix)">
+          <input type="text" [(ngModel)]="list.name">
+        </span>
+        <span>
+          <input type="text" placeholder="SEARCH" [(ngModel)]="suffix">
+        </span>
+        <span (click)="getTasks(list, '?search=' + suffix)">
+          <button>Search by</button>
+        </span>
+        <span>
+          <input type="text" placeholder="ORDERING" [(ngModel)]="suffix">
+        </span>
+        <span (click)="getTasks(list, '?ordering=' + suffix)">
+          <button>Order by</button>
+        </span>
+        <span>
+          <input type="text" placeholder="FILTER" [(ngModel)]="suffix">
+        </span>
+        <span (click)="getTasks(list, '?' + suffix)">
+          <button>Filter by</button>
+        </span>
+        <span (click)="deleteTaskList(list)">Delete</span>
+        <span (click)="updateTaskList(list)">Update</span>
+      </div>
+    </div>
+  </ng-container>
+
+  <br/>
+  TASKS:
+
+  <div>
+    <div *ngFor="let task of tasks">{{task.id}} - {{task.name}} - {{task.created_at}} - {{task.due_on}}</div>
+  </div>
+
+  <div (click)="logout()"><button>Log out</button></div>
+
+</ng-container>
+
+
+
+

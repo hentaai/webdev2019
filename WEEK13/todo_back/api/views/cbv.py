@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from rest_framework import status
-from django.http.response import Http404
+    from django.http.response import Http404
 
 class TaskLists(APIView):
     def get(self, request):
@@ -45,4 +45,28 @@ class TaskListDetail(APIView):
         tasklist = self.get_object(pk)
         tasklist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class Tasks(APIView):
+
+    def get_object(self, pk):
+        try:
+            return TaskList.objects.get(id=pk)
+        except TaskList.DoesNotExist:
+            raise Http404
+
+
+    def get(self, request, pk):
+        tasklist = self.get_object(pk)
+        tasks = tasklist.task_set.all()
+        serializer = TaskSerializer2(tasks, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, pk):
+        tasks = self.get_object(pk).task_set.all()
+        serializer = TaskSerializer2(tasks, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
